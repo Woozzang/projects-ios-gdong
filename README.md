@@ -2,13 +2,13 @@
 
 * **x86 컴퓨터로 작성한 프로젝트**
 
-  m1 (arm-64)로 돌리려고 하니 오류가 뜸
+  m1 (arm-64) 으로로 돌리려고 하니 오류가 뜸
 
   Could not find simulator for target 'x86_64-apple-ios-simulator'; found: arm64, arm64-apple-ios
-  
+
   [링크](https://stackoverflow.com/questions/56957632/could-not-find-module-for-target-x86-64-apple-ios-simulator)
-  
-  뭔가 진짜 알수없는 오류들이 엄청 생겼는데,  pod 을 한번 싹 밀고 다시 `pod install`하니깐 해결되었다.
+
+  ***뭔가 진짜 알수없는 오류들이 엄청 생겼는데,***  pod 을 한번 싹 밀고 다시 `pod install`하니깐 해결되었다.
 
 
 
@@ -51,7 +51,10 @@
 
 
 * ~~CustomCell .xib 로 구현~~ (구현 완료)
-* 테이블뷰 셀 selection 비활성화 -> 접근: didSelectRowAt 으로..?
+
+* 테이블뷰 셀 selection 비활성화
+
+  
 
 
 
@@ -89,15 +92,17 @@ https://stackoverflow.com/questions/27308595/how-do-you-dynamically-format-a-num
 
 
 
-## 💡 알게 된 것
+## 💡 알게 된 것 (feat. 사소한 것까지)
 
 * 코드에서 해당 view 가 `onscreen` 상태인지 확인하는 법
 
   window 속성이 nil 이 아니면 `onscreen` 이다.
-  
+
   
 
 * tableView 에서 'No Selection' 상태를 하면 didSelectRowAt 이 호출되지 않는다.
+
+  selection 상태의 색을 투명으로 하고 싶어서 생각한 것이었는데, 색을 바꾸는 방법이 존재했다. (아래에 적어놓음),
 
   
 
@@ -107,21 +112,41 @@ https://stackoverflow.com/questions/27308595/how-do-you-dynamically-format-a-num
 
 
 
-* ❗️❗️❗️ XCode의 project navigator 에서 discard all changes 절대절대절대절대 하지말자
+* ❗️❗️❗️ XCode의 project navigator 에서 `discard all changes` **절대절대절대절대** 하지말자
+
+  이거 누르고 복구하느라 3시간 걸렸다.
+
+  적어도 XCode 사용법을 완벽하게 이해하기 전까지는 하지말자.
 
   
 
 ## ❓ 궁금한 점과 해결
 
+*  `.xib` 로 구현한 `커스텀 cell` 의 서브 뷰들의 delegate 지정 시점은 언제일까?
+
+  `storyboard` 에서 프로토타입 cell을 구현했으면 `컨트롤 드래그`로 해결되는데, .xib 로 구성한 cell 은 코드로 구현해야 한다.
+
+  나의 해결법
+
+  1. delegate 오브젝트 ( 보통 VC ) 에서 `weak var cell: UITableViewCell?(예시. 보통 CustomType이 될것임)` 속성을 추가 해 놓는다.
+
+  2. `cellForRowAt` 에서 cell 의 identifier를 식별해내어서 참조를 얻고, 1에서 추가해 놓은 `cell` 속성에 할당하여 사용하면 된다. 예를들어 textView 의 delegate 로 VC 를 설정하고 싶은 거였다면
+
+     ```swift
+     (cellForRowAt 메서드 내부에서)
+     ...
+     cell.textView.delgate = self
+     ...
+     return cell
+     ```
+
+​		💡**여기서 느낀점**
+
+​			cell의 재사용을 위해서 `.xib` 로 구현해 보았는데, `storyboard` 방식보다 고려해야할게 많다.
+
+​			
 
 
-## ❓ 궁금 한점
-
-*  `.xib` 로 구현된 커스텀 cell 의 서브 뷰들의 delegate 지정 시점?
-
-  `storyboard` 에서 프로토타입 cell을 구현했으면 컨트롤 드래그로 해결되는데, .xib 로 구성한 cell 은 코드로 구현해야 한다.
-
-  우선 `cellForRowAt` 에서
 
 * selection 색상 변경
 
@@ -147,13 +172,13 @@ https://stackoverflow.com/questions/27308595/how-do-you-dynamically-format-a-num
   }
   ```
 
-* XCode 자체가 그냥 사용법이 매우 어렵다
+  
+
+* XCode 자체가 사용법이 매우 어렵다
 
   디렉터리가 실제 디렉터리랑 다르게 보이는 이유는 무엇일까?
 
   예를 들어 실제 디렉터리에는 9개의 파일이 있는데, XCode 에서는 3개만 보인다.
-
-  
 
 
 
