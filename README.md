@@ -1,4 +1,4 @@
-# GDONG_log - [Link](https://github.com/gongddong)
+# GDONG_log ([Link](https://github.com/gongddong))
 
 * **x86 컴퓨터로 작성한 프로젝트**
 
