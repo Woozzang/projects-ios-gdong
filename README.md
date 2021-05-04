@@ -120,6 +120,18 @@ https://stackoverflow.com/questions/27308595/how-do-you-dynamically-format-a-num
 
   
 
+* View 레이어에서 액션을 처리하는 것은 넌센스
+
+  ![Screen Shot 2021-05-02 at 4.09.27 PM](/Users/woochan/Library/Application Support/typora-user-images/Screen Shot 2021-05-02 at 4.09.27 PM.png)
+
+  
+
+  왜 기본적인 MVC 패턴 구조도 지키지 않는 무지성의 코드를 나는 작성한 것인가...?
+
+  Cell 내의  `UIButton` 을 cellForRowAt 에서 ViewController와 연결하고 VC 에서 이벤트를 처리하게 하자
+
+  
+
 ## ❓ 궁금한 점과 해결
 
 *  `.xib` 로 구현한 `커스텀 cell` 의 서브 뷰들의 delegate 지정 시점은 언제일까?
@@ -179,6 +191,58 @@ https://stackoverflow.com/questions/27308595/how-do-you-dynamically-format-a-num
   디렉터리가 실제 디렉터리랑 다르게 보이는 이유는 무엇일까?
 
   예를 들어 실제 디렉터리에는 9개의 파일이 있는데, XCode 에서는 3개만 보인다.
+
+
+
+* **`cellForRowAt`에서 cell 구성을 할때 가독성을 높일 수 없을까?**
+
+💡**1차 개선**
+
+```swift
+    // before
+    if indexPath.row == 0, let cell = cell as? PhotoCell {
+      cell.imagePickerButton.addTarget(self, action: #selector(showImageSourceOption), for: .touchUpInside)
+    }
+    
+    // after
+    if reuseIdentifier == Cells.PhotoCell.rawValue, let cell = cell as? PhotoCell {
+      cell.imagePickerButton.addTarget(self, action: #selector(showImageSourceOption), for: .touchUpInside)
+      return cell
+    }
+```
+
+indexPath.row 값을 확인해서 캐스팅하지 않고
+
+dequeReusableCell 에서 사용하는 reuseIdentifier 를 미리 상수로 저장해 놓은 다음,
+
+Cells 타입의 rawValue와 비교해서 알맞은 cell 을 캐스팅하였다.
+
+​	
+
+💡**2차 개선**
+
+```swift
+    switch Cells(rawValue: reuseIdentifier) {
+      case .PhotoCell:
+        if let cell = cell as? PhotoCell {
+          cell.imagePickerButton.addTarget(self, action: #selector(showImageSourceOption), for: .touchUpInside)
+          return cell
+        }
+          
+      case .EntityCell:
+        if let cell = cell as? EntityCell {
+          cell.textView.delegate = self
+          return cell
+        }
+          
+      default:
+        break
+    }
+```
+
+미리 상수로 저장해 놓은 `reuseIdentifier` 로 Cells 인스턴스를 만들어서 그 타입을 비교하였다.
+
+❓두 방법의 성능 비교를 어떻게 해야하는 지 궁금하다.
 
 
 
