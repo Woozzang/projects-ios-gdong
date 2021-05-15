@@ -134,23 +134,25 @@ https://stackoverflow.com/questions/27308595/how-do-you-dynamically-format-a-num
 
 ## ❓ 궁금한 점과 해결
 
-*  `.xib` 로 구현한 `커스텀 cell` 의 서브 뷰들의 delegate 지정 시점은 언제일까?
 
-  `storyboard` 에서 프로토타입 cell을 구현했으면 `컨트롤 드래그`로 해결되는데, .xib 로 구성한 cell 은 코드로 구현해야 한다.
 
-  나의 해결법
+### `.xib` 로 구현한 `커스텀 cell` 의 서브 뷰들의 delegate 지정 시점은 언제일까?
 
-  1. delegate 오브젝트 ( 보통 VC ) 에서 `weak var cell: UITableViewCell?(예시. 보통 CustomType이 될것임)` 속성을 추가 해 놓는다.
+`storyboard` 에서 프로토타입 cell을 구현했으면 `컨트롤 드래그`로 해결되는데, .xib 로 구성한 cell 은 코드로 구현해야 한다.
 
-  2. `cellForRowAt` 에서 cell 의 identifier를 식별해내어서 참조를 얻고, 1에서 추가해 놓은 `cell` 속성에 할당하여 사용하면 된다. 예를들어 textView 의 delegate 로 VC 를 설정하고 싶은 거였다면
+나의 해결법
 
-     ```swift
-     (cellForRowAt 메서드 내부에서)
-     ...
-     cell.textView.delgate = self
-     ...
-     return cell
-     ```
+1. delegate 오브젝트 ( 보통 VC ) 에서 `weak var cell: UITableViewCell?(예시. 보통 CustomType이 될것임)` 속성을 추가 해 놓는다.
+
+2. `cellForRowAt` 에서 cell 의 identifier를 식별해내어서 참조를 얻고, 1에서 추가해 놓은 `cell` 속성에 할당하여 사용하면 된다. 예를들어 textView 의 delegate 로 VC 를 설정하고 싶은 거였다면
+
+   ```swift
+   (cellForRowAt 메서드 내부에서)
+   ...
+   cell.textView.delgate = self
+   ...
+   return cell
+   ```
 
 ​		💡**여기서 느낀점**
 
@@ -160,31 +162,31 @@ https://stackoverflow.com/questions/27308595/how-do-you-dynamically-format-a-num
 
 
 
-* selection 색상 변경
+### selection 색상 변경
 
-  `storyboard` : UITableViewCell 타입 오브젝트의 Attribute Inspector 에서 None, blue, gray, default 설정 가능
+`storyboard` : UITableViewCell 타입 오브젝트의 Attribute Inspector 에서 None, blue, gray, default 설정 가능
 
-  추가적으로 None 아니면 defualt (= blue, gray) 로 나뉘고 default,blue 는 gray 효과임
+추가적으로 None 아니면 defualt (= blue, gray) 로 나뉘고 default,blue 는 gray 효과임
 
-  `programmatically`
+`programmatically`
 
-  ```swift
-  // cell 에서  
-  override func awakeFromNib() {
-    super.awakeFromNib()
-    
-    self.selectionStyle = .default
-    //self.selectionStyle = .none 이면 셀렉션 색상이 투명이다
+```swift
+// cell 에서  
+override func awakeFromNib() {
+  super.awakeFromNib()
   
-    self.selectedBackgroundView = {
-      let view = UIView()
-      view.backgroundColor = .red
-      return view
-    }()
-  }
-  ```
+  self.selectionStyle = .default
+  //self.selectionStyle = .none 이면 셀렉션 색상이 투명이다
 
-  
+  self.selectedBackgroundView = {
+    let view = UIView()
+    view.backgroundColor = .red
+    return view
+  }()
+}
+```
+
+
 
 * XCode 자체가 사용법이 매우 어렵다
 
@@ -194,7 +196,7 @@ https://stackoverflow.com/questions/27308595/how-do-you-dynamically-format-a-num
 
 
 
-* **`cellForRowAt`에서 cell 구성을 할때 가독성을 높일 수 없을까?**
+### **`cellForRowAt`에서 cell 구성을 할때 가독성을 높일 수 없을까?**
 
 💡**1차 개선**
 
@@ -219,7 +221,7 @@ Cells 타입의 rawValue와 비교해서 알맞은 cell 을 캐스팅하였다.
 
 ​	
 
-💡**2차 개선**
+💡**2차 개선**: Cell 의 이름과 동일한 열거형 Cell 값을 통해 구성
 
 ```swift
     switch Cells(rawValue: reuseIdentifier) {
@@ -243,6 +245,118 @@ Cells 타입의 rawValue와 비교해서 알맞은 cell 을 캐스팅하였다.
 미리 상수로 저장해 놓은 `reuseIdentifier` 로 Cells 인스턴스를 만들어서 그 타입을 비교하였다.
 
 ❓두 방법의 성능 비교를 어떻게 해야하는 지 궁금하다.
+
+
+
+### **두 개의 스토리보드를 `storyboard reference`로 연결하기**
+
+우선 뷰 컨트롤러 간 정보전달은 세그웨이 (Segue), Notification, KVO 을 이용할 수 있다. (KVO 공부 언제하지...🤔)
+
+
+
+CreatNewItemVC 과 CategoryTableVC 사이에서는 세그웨이를 사용하였다.
+
+💡왜 Notification 대신 Segue 를 사용하였나요?
+
+
+
+보통 하나의 스토리보드에 두 개의 뷰 컨트롤러(씬)가 있었다면, 세그웨이를 간단하게 연결할 수 있다.
+
+
+
+하지만 이 프로젝트는 하나의 뷰 컨트롤러가 하나의 스토리보드를 갖게 하는 방법으로 개발을 진행하기 때문에, 두 뷰 컨트롤러간 연결을 세그웨이로 하려면 스토리보드 레퍼런스를 사용해야했다.
+
+
+
+선제 조건: 스토리보드의 `Identity Inspector`에서 `Storyboard ID` 를 설정해주어야 한다.
+
+나는 뷰 컨트롤러 이름과 같게 설정하였다.
+
+
+
+### Segue 방식 presentationStyle 코드로 지정하는 시점
+
+```swift
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    
+    if segue.identifier == "CategorySegue" {
+      guard let categoryTableVC = segue.destination as? CategoryTableViewController else {
+        return
+      }
+      categoryTableVC.previousVC = self
+      categoryTableVC.modalPresentationStyle = .fullScreen
+    } 
+  }
+```
+
+
+
+presentantionStyle 은 `prepare(for:sender:)` 에서 설정해주자~!
+
+* 세그웨이가 아닌 present() 로 띄울 때는 호출 직전 시점에 설정해주면 된다.
+
+  
+
+❓**그런데 push&pop 방식으로  TransitionStyle 을 설정하고 싶은데...?**
+
+push&pop 은 segue 에서는 기본으로 제공하는 Transition Style 이 아니다.
+
+present() 로 화면 전환을 하거나, navigation Controller embedding 혹은 custom transition 을 구현해야할 것 같다.
+
+
+
+다음부터는 이 부분을 미리 고려해서 결정하자!
+
+
+
+
+
+### 🤔 defaultConfiguration 의 사용
+
+ `iOS 14` 부터 cell 의 설정을 defaultConfiguration 인스턴스를 사용하여 할수 있다.
+
+https://developer.apple.com/documentation/uikit/uitableviewcell/3601058-defaultcontentconfiguration
+
+
+
+```swift
+    var content = cell.defaultContentConfiguration()
+
+    content.text = categoryList[indexPath.row].rawValue
+
+    cell.contentConfiguration = content
+```
+
+
+
+위와같이 configuration 인스턴스를 생성하여 설정해주고 다시 cell 의 속성에 집어넣는 방식인데....
+
+설정한 속성값에 접근하는 방법을 모르겠다.
+
+예를 들어 cell 의 text 를 위와같이 설정하고 나중에 저 text 에 접근할 수 있는 방법이 없다.
+
+가장 가능성이 높은 `contentConfiguration` 속성에서도 내부에 text 속성이 따로 없다.
+
+
+
+**💡해결함!!!!!!!!!!!!!!**
+
+```swift
+    guard let content = cell.contentConfiguration as? UIListContentConfiguration else {
+      print(#function)
+      return
+    }
+
+	  selectedCategory = content.text
+```
+
+
+
+`contentConfiguration` 속성이 `UIContentConfiguration` 이었고, `UIListContentConfiguration` 으로 다운캐스팅 해주어야했다.
+
+마치 dequeReusableCell  에서 가장 기본인  UITableViewCell 타입으로 반환해주어 캐스팅이 필요한 것과 같은 상황이다.
+
+
 
 
 
