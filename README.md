@@ -1,17 +1,5 @@
 # GDONG_log ([Link](https://github.com/gongddong))
 
-* **x86 컴퓨터로 작성한 프로젝트**
-
-  m1 (arm-64) 으로로 돌리려고 하니 오류가 뜸
-
-  Could not find simulator for target 'x86_64-apple-ios-simulator'; found: arm64, arm64-apple-ios
-
-  [링크](https://stackoverflow.com/questions/56957632/could-not-find-module-for-target-x86-64-apple-ios-simulator)
-
-  ***뭔가 진짜 알수없는 오류들이 엄청 생겼는데,***  pod 을 한번 싹 밀고 다시 `pod install`하니깐 해결되었다.
-
-
-
 * **hasValidValue, isValid 속성들의 삭제**
 
   위 속성들이 필요하다고 생각한 이유: '완료' 버튼을 눌러서 글을 서버에 포스트 하는 시점에, 셀에 유효한 값들이 들어있는지 확인
@@ -50,11 +38,10 @@
 
 
 
-* ~~CustomCell .xib 로 구현~~ (구현 완료)
-
-* 테이블뷰 셀 selection 비활성화
+* 
 
   
+
 
 
 
@@ -84,15 +71,31 @@ https://stackoverflow.com/questions/27308595/how-do-you-dynamically-format-a-num
 
 
 
-## TODO
+## ✅ TO-DO List
 
-* # textField(_:shouldChangeCharactersIn:replacementString:) 메서드 이해하기
+* ~~셀 들을 CustomCell .xib 로 구현~~ (완료)
+* ~~셀 selection style 코드로 설정~~ (완료)
+* ~~CategoryTableVC 구현 마치기~~ (완료)
+* ~~글쓰기 관련 Error 타입 추가하기~~ (완료)
+* CreateNewItemVC 에서 PhotoCell 의 CollectionView 구현하기
 
 
 
 
 
 ## 💡 알게 된 것 (feat. 사소한 것까지)
+
+* **x86 컴퓨터로 작성한 프로젝트**
+
+  m1 (arm-64) 으로로 돌리려고 하니 오류가 뜸
+
+  Could not find simulator for target 'x86_64-apple-ios-simulator'; found: arm64, arm64-apple-ios
+
+  [링크](https://stackoverflow.com/questions/56957632/could-not-find-module-for-target-x86-64-apple-ios-simulator)
+
+  ***뭔가 진짜 알수없는 오류들이 엄청 생겼는데,***  pod 을 한번 싹 밀고 다시 `pod install`하니깐 해결되었다.
+
+  
 
 * 코드에서 해당 view 가 `onscreen` 상태인지 확인하는 법
 
@@ -164,7 +167,7 @@ https://stackoverflow.com/questions/27308595/how-do-you-dynamically-format-a-num
 
 ### selection 색상 변경
 
-`storyboard` : UITableViewCell 타입 오브젝트의 Attribute Inspector 에서 None, blue, gray, default 설정 가능
+`storyboard` : UITableViewCell 타입 오브젝트의 **Attribute Inspector** 에서 None, blue, gray, default 설정 가능
 
 추가적으로 None 아니면 defualt (= blue, gray) 로 나뉘고 default,blue 는 gray 효과임
 
@@ -355,6 +358,12 @@ https://developer.apple.com/documentation/uikit/uitableviewcell/3601058-defaultc
 `contentConfiguration` 속성이 `UIContentConfiguration` 이었고, `UIListContentConfiguration` 으로 다운캐스팅 해주어야했다.
 
 마치 dequeReusableCell  에서 가장 기본인  UITableViewCell 타입으로 반환해주어 캐스팅이 필요한 것과 같은 상황이다.
+
+
+
+### URLScheme 과 DeepLink 의 개념
+
+https://gofo-coding.tistory.com/entry/URL-Scheme
 
 
 
